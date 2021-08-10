@@ -77,8 +77,7 @@ library("megadepth")
 
 ## Install Megadepth's pre-compiled binary on your system
 install_megadepth()
-#> The latest megadepth version is 1.1.0c
-#> megadepth has been installed to /home/rstudio/bin
+#> It seems megadepth has been installed. Use force = TRUE to reinstall or upgrade.
 
 ## Next, we locate the example BigWig and annotation files
 example_bw <- system.file("tests", "test.bam.all.bw",
@@ -251,7 +250,7 @@ print(citation("megadepth"), bibtex = TRUE)
 #> Zhang D, Collado-Torres L (2021). _megadepth: BigWig and BAM related
 #> utilities_. doi: 10.18129/B9.bioc.megadepth (URL:
 #> https://doi.org/10.18129/B9.bioc.megadepth),
-#> https://github.com/LieberInstitute/megadepth - R package version 1.1.6,
+#> https://github.com/LieberInstitute/megadepth - R package version 1.3.2,
 #> <URL: http://www.bioconductor.org/packages/megadepth>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -261,7 +260,7 @@ print(citation("megadepth"), bibtex = TRUE)
 #>     author = {David Zhang and Leonardo Collado-Torres},
 #>     year = {2021},
 #>     url = {http://www.bioconductor.org/packages/megadepth},
-#>     note = {https://github.com/LieberInstitute/megadepth - R package version 1.1.6},
+#>     note = {https://github.com/LieberInstitute/megadepth - R package version 1.3.2},
 #>     doi = {10.18129/B9.bioc.megadepth},
 #>   }
 #> 
