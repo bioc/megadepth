@@ -1,181 +1,184 @@
-#' Read a junction TSV file created by Megadepth as a table
-#'
-#' Read an `*all_jxs.tsv` or `*jxs.tsv` file created by `bam_to_junctions()` or
-#' manually by the user using Megadepth. The rows of a `*jxs.tsv` can have
-#' either 7 or 14 columns, which can lead to warnings when reading in - these
-#' are safe to ignore. For details on the format of the input TSV file, check
-#' <https://github.com/ChristopherWilks/megadepth#junctions>.
-#'
-#' @param tsv_file A `character(1)` specifying the path to the tab-separated
-#'   (TSV) file created manually using `megadepth_shell()` or on a previous
-#'   `bam_to_junctions()` run.
-#'
-#' @importFrom readr read_delim
-#' @return A `tibble::tibble()` with the junction data that follows the format
-#'   specified at <https://github.com/ChristopherWilks/megadepth#junctions>.
-#' @export
-#'
-#' @examples
-#'
-#' ## Install if necessary
-#' install_megadepth()
-#'
-#' ## Find the example BAM file
-#' example_bam <- system.file("tests", "test.bam",
-#'     package = "megadepth", mustWork = TRUE
-#' )
-#'
-#' ## Run bam_to_junctions()
-#' example_jxs <- bam_to_junctions(example_bam, overwrite = TRUE)
-#'
-#' ## Read the junctions in as a tibble
-#' all_jxs <- read_junction_table(example_jxs[["all_jxs.tsv"]])
-#'
-#' all_jxs
-read_junction_table <- function(tsv_file) {
+example_bam <- system.file("tests",
+                           "test2.bam",
+                           package = "megadepth",
+                           mustWork = TRUE
+)
 
-    # define the expected column names and types
-    if (grepl("all_jxs.tsv", tsv_file)) {
-        col_names <- c(
-            "read_name",
-            "chr",
-            "start",
-            "end",
-            "mapping_strand",
-            "cigar",
-            "unique"
+example_jxs <- bam_to_junctions(example_bam,
+                                all_junctions = TRUE,
+                                junctions = TRUE,
+                                overwrite = TRUE
+)
+
+all_jxs <- read_junction_table(example_jxs[["all_jxs.tsv"]])
+
+##### read_junction_table #####
+
+test_that("read_junction_table has correct output", {
+    expect_equal(
+        all_jxs,
+        read_junction_table(
+            "https://raw.githubusercontent.com/ChristopherWilks/megadepth/master/tests/test2.bam.all_jxs.tsv"
         )
-
-        col_types <- c("ccddici")
-    } else if (grepl("jxs.tsv", tsv_file)) {
-        col_names <- c(
-            "chr_id",
-            "POS_field",
-            "mapping_strand",
-            "insert_length",
-            "cigar",
-            "junction_coords",
-            "unique",
-            "mate_ref_id",
-            "mate_POS_field",
-            "mate_mapping_strand",
-            "mate_insert_length",
-            "mate_cigar",
-            "mate_junction_coords",
-            "mate_unique"
-        )
-
-        col_types <- c("ciidcciciidcci")
-    } else {
-        stop('tsv_file must have the extension "all_jxs.tsv" or "jxs.tsv"')
-    }
-
-    # load in the junctions
-    jxs <- readr::read_delim(
-        tsv_file,
-        delim = "\t",
-        progress = FALSE,
-        col_names = col_names,
-        col_types = col_types
     )
+    
+    suppressWarnings(expr = {
+        jxs <- read_junction_table(example_jxs[["jxs.tsv"]])
+        chris_jxs <- read_junction_table(
+            "https://raw.githubusercontent.com/ChristopherWilks/megadepth/master/tests/test2.bam.jxs.tsv"
+        )
+    })
+    
+    expect_equal(jxs, chris_jxs, ignore_attr = TRUE)
+})
 
-    ## Translate the strand into the format used in Bioconductor
-    for (i in seq_along(jxs)) {
-        if (grepl("strand", colnames(jxs[i]))) {
-            jxs[[i]] <- ifelse(jxs[[i]] == 0, "+", "-")
-        }
+test_that("read_junction_table catches user input errors", {
+    expect_error(
+        read_junction_table(tsv_file = "no_correct_extension"),
+        'tsv_file must have the extension "all_jxs.tsv" or "jxs.tsv"'
+    )
+})
+
+##### process_junction_table ######
+
+# Don't test on windows as needs to download and run .sh script
+if (!xfun::is_windows()) {
+    
+    # download Chris' script for testing
+    process_jx_script_path <- file.path(tempdir(), "process_jx_output.sh")
+    
+    download.file(
+        "https://raw.githubusercontent.com/ChristopherWilks/megadepth/master/junctions/process_jx_output.sh",
+        process_jx_script_path
+    )
+    
+    Sys.chmod(process_jx_script_path, "0755")
+    
+    # wrap using process_jx_output.sh in function
+    process_jx_output_shell <- function(all_jxs_path, process_jx_script_path) {
+        system(paste(
+            process_jx_script_path,
+            all_jxs_path
+        ))
+        
+        # processed junctions
+        processed_jxs <- readr::read_delim(
+            paste0(all_jxs_path, ".sjout"),
+            delim = "\t",
+            col_names = c(
+                "chr",
+                "start",
+                "end",
+                "strand",
+                "intron_motif",
+                "annotated",
+                "uniquely_mapping_reads",
+                "multimapping_reads", 
+                "X9"
+            ) 
+        ) %>% dplyr::select(-X9)
+        
+        return(processed_jxs)
     }
-
-    return(jxs)
+    
+    test_that("process_junction_table has correct output", {
+        
+        # also read/test junctions from test.bam (as well as test2.bam above)
+        example_bam2 <- system.file("tests",
+                                    "test.bam",
+                                    package = "megadepth",
+                                    mustWork = TRUE
+        )
+        
+        example_jxs2 <- bam_to_junctions(example_bam2,
+                                         all_junctions = TRUE,
+                                         junctions = TRUE,
+                                         overwrite = TRUE
+        )
+        
+        suppressWarnings(expr = {
+            processed_jxs2_shell <- process_jx_output_shell(
+                all_jxs_path = example_jxs2[["all_jxs.tsv"]],
+                process_jx_script_path
+            )
+        })
+        
+        suppressWarnings(expr = {
+            processed_jxs_shell <- process_jx_output_shell(
+                all_jxs_path = example_jxs[["all_jxs.tsv"]],
+                process_jx_script_path
+            )
+        })
+        
+        # ignore_attr = TRUE is needed as there are "spec" and "problems"
+        # attributes that are created on the tibble through read_delim()
+        expect_equal(process_junction_table(all_jxs),
+                     processed_jxs_shell,
+                     ignore_attr = TRUE
+        )
+        
+        expect_equal(example_jxs2[["all_jxs.tsv"]] %>%
+                         read_junction_table() %>%
+                         process_junction_table(),
+                     processed_jxs2_shell,
+                     ignore_attr = TRUE
+        )
+    })
 }
 
-#' Process junctions into a STAR compatible format
-#'
-#' Parses the junctions outputted from `process_junction_table()` into an STAR
-#' compatible format (SJ.out) for more convenient use in downstream analyses.
-#' The columns strand, intron_motif and annotated will always be 0 (undefined)
-#' but can be derived through extracting the dinucleotide motifs for the given
-#' reference coordinates for canonical motifs. This function is an
-#' R-implementation of the Megadepth helper script, on which further details of
-#' column definitions can be found:
-#' <https://github.com/ChristopherWilks/megadepth#junctions>.
-#'
-#' @param all_jxs A `tibble::tibble()` containing junction data ("all.jxs.tsv")
-#'   generated by `bam_to_junctions(all_junctions = TRUE)` and imported through
-#'   `megadepth::read_junction_table()`.
-#'
-#' @importFrom magrittr %>%
-#' @importFrom dplyr arrange group_by summarise mutate select
-#' @return Processed junctions in a STAR-compatible format.
-#'
-#' @export
-#'
-#' @examples
-#'
-#' ## Install if necessary
-#' install_megadepth()
-#'
-#' ## Find the example BAM file
-#' example_bam <- system.file("tests", "test.bam",
-#'     package = "megadepth", mustWork = TRUE
-#' )
-#'
-#' ## Run bam_to_junctions()
-#' example_jxs <- bam_to_junctions(example_bam, overwrite = TRUE)
-#'
-#' ## Read the junctions in as a tibble
-#' all_jxs <- read_junction_table(example_jxs[["all_jxs.tsv"]])
-#'
-#' ## Process junctions into a STAR-compatible format
-#' processed_jxs <- process_junction_table(all_jxs)
-#'
-#' processed_jxs
-process_junction_table <- function(all_jxs) {
-    colnames_exp <- c(
-        "read_name",
-        "chr",
-        "start",
-        "end",
-        "mapping_strand",
-        "cigar",
-        "unique"
+test_that("process_junction_table catches user input errors", {
+    suppressWarnings(expr = {
+        jxs <- read_junction_table(example_jxs[["jxs.tsv"]])
+    })
+    
+    expect_error(
+        process_junction_table(jxs),
+        "all_jxs argument should have colnames"
     )
+})
 
-    colnames_act <- colnames(all_jxs)
+# use local full-size bam for testing
+# avoid testing when local bam is not available, to avoid large test times
+# in which case, unit testing relies on using test.bam/test2.bam above
+bam_path <- "/data/RNA_seq_diag/niccolo_X_linked_dystonia/180420-140039/STAR/NIAA_Aligned.sortedBysamtools.out.bam"
 
-    if (!identical(colnames_exp, colnames_act)) {
-        stop(paste(
-            "all_jxs argument should have colnames:",
-            paste(colnames_exp, collapse = ", "),
-            "\nHave junctions from a jxs.tsv been used instead of a all_jxs.tsv?"
-        ))
-    }
-
-    processed_jxs <- all_jxs %>%
-        dplyr::arrange(chr, start, end, read_name) %>%
-        dplyr::distinct(chr, start, end, read_name, .keep_all = TRUE) %>%
-        dplyr::group_by(chr, start, end) %>%
-        dplyr::summarise(
-            uniquely_mapping_reads = sum(unique),
-            n_reads = dplyr::n(),
-            .groups = "drop"
+if (file.exists(bam_path)) {
+    local_bam_jxs <- bam_to_junctions(bam_path,
+                                      all_junctions = TRUE,
+                                      overwrite = TRUE
+    )
+    
+    # take first n_rows_to_test rows
+    n_rows_to_test <- 1000000
+    local_bam_jxs_head <- local_bam_jxs[["all_jxs.tsv"]] %>%
+        gsub(".all_jxs", "_head.all_jxs", .)
+    
+    local_bam_jxs[["all_jxs.tsv"]] %>%
+        readr::read_delim(
+            n_max = n_rows_to_test,
+            col_names = FALSE,
+            delim = "\t"
         ) %>%
-        dplyr::mutate(
-            multimapping_reads = n_reads - uniquely_mapping_reads,
-            strand = 0,
-            intron_motif = 0,
-            annotated = 0
-        ) %>%
-        dplyr::select(
-            chr,
-            start,
-            end,
-            strand,
-            intron_motif,
-            annotated,
-            uniquely_mapping_reads,
-            multimapping_reads
+        readr::write_delim(local_bam_jxs_head,
+                           col_names = FALSE,
+                           delim = "\t"
         )
-
-    return(processed_jxs)
+    
+    local_bam_jxs_processed <- read_junction_table(local_bam_jxs_head) %>%
+        process_junction_table()
+    
+    suppressWarnings(
+        local_bam_jxs_processed_shell <-
+            process_jx_output_shell(
+                local_bam_jxs_head,
+                process_jx_script_path
+            )
+    )
+    
+    test_that("process_junction_table works on a larger set of jxs", {
+        expect_equal(local_bam_jxs_processed,
+                     local_bam_jxs_processed_shell,
+                     ignore_attr = TRUE
+        )
+    })
 }
