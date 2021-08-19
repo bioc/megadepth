@@ -4,12 +4,15 @@
 #' and try to copy it to a system directory so \pkg{megadepth} can run the
 #' \command{megadepth} command.
 #'
-#' This function tries to install Megadepth to \code{Sys.getenv('APPDATA')} on
-#' Windows, \file{~/Library/Application Support} on macOS, and \file{~/bin/} on
-#' other platforms (such as Linux). If these directories are not writable, the
-#' package directory \file{Megadepth} of \pkg{megadepth} will be used. If it
-#' still fails, you have to install Megadepth by yourself and make sure it can
-#' be found via the environment variable \code{PATH}.
+#' If this function is run in an non-interactive session such as \code{R CMD
+#' Check}, it will install Megadepth to \code{tempdir()}. If this function is
+#' run interactively, the user will be prompted to agree to allow Megadepth to
+#' be installed at \code{Sys.getenv('APPDATA')} on Windows,
+#' \file{~/Library/Application Support} on macOS, and \file{~/bin/} on other
+#' platforms (such as Linux). If these directories are not writable, the package
+#' directory \file{Megadepth} of \pkg{megadepth} will be used. If it still
+#' fails, you have to install Megadepth by yourself and make sure it can be
+#' found via the environment variable \code{PATH}.
 #'
 #' If you want to install Megadepth to a custom path, you can set the global
 #' option \code{megadepth.dir} to a directory to store the Megadepth executable
@@ -81,7 +84,15 @@ install_megadepth <- function(version = "latest", force = FALSE) {
         Sys.chmod(exec, "0755")
     }
 
-    install_megadepth_bin(exec)
+    if (interactive()) {
+        install_megadepth_bin(exec)
+    } else {
+        message(
+            "This is not an interactive session, ",
+            "therefore megadepth has been installed temporarily to \n",
+            exec
+        )
+    }
 }
 
 megadepth_latest <- function() {
@@ -96,6 +107,22 @@ megadepth_latest <- function() {
 install_megadepth_bin <- function(exec) {
     success <- FALSE
     dirs <- bin_paths()
+
+    message(
+        "megadepth will be be installed at ",
+        "one of the following directories.\n",
+        "Directories will be tried in sequential order until megadepth is succesffuly installed, ",
+        "or no directories remain:\n",
+        paste(dirs, collapse = ", "),
+        "\nWould you like to proceed?"
+    )
+
+    do_it <- utils::menu(c("Yes", "No")) == 1
+
+    if (!do_it) {
+        return(invisible())
+    }
+
     for (destdir in dirs) {
         dir.create(destdir, showWarnings = FALSE)
         success <- file.copy(exec, destdir, overwrite = TRUE)
@@ -109,10 +136,10 @@ install_megadepth_bin <- function(exec) {
             paste(dirs, collapse = ", ")
         )
     }
-    message("megadepth has been installed to ", normalizePath(destdir))
+    message("megadepth has been successfully installed to ", normalizePath(destdir))
 }
 
-# possible locations of the megadepth executable
+# obtain possible locations of the megadepth executable
 bin_paths <- function(dir = "Megadepth",
     extra_path = getOption("megadepth.dir")) {
     if (xfun::is_windows()) {
@@ -128,6 +155,12 @@ bin_paths <- function(dir = "Megadepth",
         path <- c("~/bin", "/snap/bin", "/var/lib/snapd/snap/bin")
     }
     path <- c(extra_path, path, pkg_file(dir, mustWork = FALSE))
+    # remove empty paths potentially created by pkgfile
+    path <- path[path != ""]
+    # if not interactive, look for megadepth in the tempdir() for find_exec()
+    if (!interactive()) {
+        path <- c(tempdir(), path)
+    }
     path
 }
 
@@ -174,9 +207,9 @@ find_megadepth <- local({
     function() {
         if (is.null(path)) {
             path <<- find_exec(
-                "megadepth",
-                "Megadepth",
-                "You can install it via megadepth::install_megadepth()"
+                cmd = "megadepth",
+                dir = "Megadepth",
+                info = "You can install it via megadepth::install_megadepth()"
             )
         }
         path
