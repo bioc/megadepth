@@ -1,3 +1,10 @@
+# megadepth 1.3.3
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+* Make `install_megadepth` more transparent for users. Interactive sessions will 
+now prompt users to agree to the install Megadepth at the printed locations. 
+
 # megadepth 1.1.5
 
 NEW FEATURES
