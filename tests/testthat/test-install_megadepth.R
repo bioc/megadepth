@@ -1,7 +1,7 @@
 test_that("installation of the latest version works", {
     expect_message(
         megadepth::install_megadepth(force = TRUE),
-        "megadepth has been installed to"
+        "megadepth has been installed"
     )
     expect_equal(
         find_exec("megadepth", "Megadepth"),

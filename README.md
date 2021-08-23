@@ -77,7 +77,9 @@ library("megadepth")
 
 ## Install Megadepth's pre-compiled binary on your system
 install_megadepth()
-#> It seems megadepth has been installed. Use force = TRUE to reinstall or upgrade.
+#> The latest megadepth version is 1.1.0c
+#> This is not an interactive session, therefore megadepth has been installed temporarily to 
+#> /var/folders/kb/g5h79h8d5zv_0wpyg6pb2sph0000gn/T//Rtmp68hrIp/megadepth
 
 ## Next, we locate the example BigWig and annotation files
 example_bw <- system.file("tests", "test.bam.all.bw",
@@ -250,7 +252,7 @@ print(citation("megadepth"), bibtex = TRUE)
 #> Zhang D, Collado-Torres L (2021). _megadepth: BigWig and BAM related
 #> utilities_. doi: 10.18129/B9.bioc.megadepth (URL:
 #> https://doi.org/10.18129/B9.bioc.megadepth),
-#> https://github.com/LieberInstitute/megadepth - R package version 1.2.2,
+#> https://github.com/LieberInstitute/megadepth - R package version 1.2.3,
 #> <URL: http://www.bioconductor.org/packages/megadepth>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -260,7 +262,7 @@ print(citation("megadepth"), bibtex = TRUE)
 #>     author = {David Zhang and Leonardo Collado-Torres},
 #>     year = {2021},
 #>     url = {http://www.bioconductor.org/packages/megadepth},
-#>     note = {https://github.com/LieberInstitute/megadepth - R package version 1.2.2},
+#>     note = {https://github.com/LieberInstitute/megadepth - R package version 1.2.3},
 #>     doi = {10.18129/B9.bioc.megadepth},
 #>   }
 #> 
@@ -303,7 +305,7 @@ By contributing to this project, you agree to abide by its terms.
     *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)*
     customized to use [Bioconductor’s docker
     containers](https://www.bioconductor.org/help/docker/) and
-    *[BiocCheck](https://bioconductor.org/packages/3.12/BiocCheck)*.
+    *[BiocCheck](https://bioconductor.org/packages/3.14/BiocCheck)*.
   - Code coverage assessment is possible thanks to
     [codecov](https://codecov.io/gh) and
     *[covr](https://CRAN.R-project.org/package=covr)*.
@@ -320,7 +322,7 @@ By contributing to this project, you agree to abide by its terms.
 For more details, check the `dev` directory.
 
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.12/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.14/biocthis)*.
 
 ## `ReCount` project
 
@@ -332,9 +334,9 @@ R/Bioconductor package and other tools are related to each other.
 
 ## Teams involved
 
-*[megadepth](https://bioconductor.org/packages/3.12/megadepth)* was made
+*[megadepth](https://bioconductor.org/packages/3.14/megadepth)* was made
 possible to [David Zhang](https://twitter.com/dyzhang32), the author of
-*[dasper](https://bioconductor.org/packages/3.12/dasper)*, and a member
+*[dasper](https://bioconductor.org/packages/3.14/dasper)*, and a member
 of the [Mina Ryten](https://snca.atica.um.es/)’s lab at UCL.
 
 The `ReCount` family involves the following teams:

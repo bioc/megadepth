@@ -23,12 +23,15 @@ and try to copy it to a system directory so \pkg{megadepth} can run the
 \command{megadepth} command.
 }
 \details{
-This function tries to install Megadepth to \code{Sys.getenv('APPDATA')} on
-Windows, \file{~/Library/Application Support} on macOS, and \file{~/bin/} on
-other platforms (such as Linux). If these directories are not writable, the
-package directory \file{Megadepth} of \pkg{megadepth} will be used. If it
-still fails, you have to install Megadepth by yourself and make sure it can
-be found via the environment variable \code{PATH}.
+If this function is run in an non-interactive session such as \code{R CMD
+Check}, it will install Megadepth to \code{tempdir()}. If this function is
+run interactively, the user will be prompted to agree to allow Megadepth to
+be installed at \code{Sys.getenv('APPDATA')} on Windows,
+\file{~/Library/Application Support} on macOS, and \file{~/bin/} on other
+platforms (such as Linux). If these directories are not writable, the package
+directory \file{Megadepth} of \pkg{megadepth} will be used. If it still
+fails, you have to install Megadepth by yourself and make sure it can be
+found via the environment variable \code{PATH}.
 
 If you want to install Megadepth to a custom path, you can set the global
 option \code{megadepth.dir} to a directory to store the Megadepth executable
