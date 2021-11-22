@@ -136,7 +136,7 @@ install_megadepth_bin <- function(exec) {
             paste(dirs, collapse = ", ")
         )
     }
-    message("megadepth has been successfully installed to ", normalizePath(destdir))
+    message("megadepth has been installed to ", normalizePath(destdir))
 }
 
 # obtain possible locations of the megadepth executable
