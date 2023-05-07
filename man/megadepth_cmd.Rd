@@ -30,11 +30,11 @@ Wrapper functions to run Megadepth commands via
 }
 \section{Functions}{
 \itemize{
-\item \code{megadepth_cmd}: Run an arbitrary Megadepth command.
+\item \code{megadepth_cmd()}: Run an arbitrary Megadepth command.
 
-\item \code{megadepth_shell}: Run an arbitrary Megadepth command.
+\item \code{megadepth_shell()}: Run an arbitrary Megadepth command.
+
 }}
-
 \examples{
 
 ## Install if necessary

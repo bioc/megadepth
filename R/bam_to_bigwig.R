@@ -54,11 +54,12 @@
 #'     )
 #'     bw_cov
 #' }
-bam_to_bigwig <- function(bam_file,
-    prefix = file.path(tempdir(), basename(bam_file)),
-    min_unique_qual = FALSE,
-    double_count = FALSE,
-    overwrite = FALSE) {
+bam_to_bigwig <- function(
+        bam_file,
+        prefix = file.path(tempdir(), basename(bam_file)),
+        min_unique_qual = FALSE,
+        double_count = FALSE,
+        overwrite = FALSE) {
     if (xfun::is_windows()) {
         warning(
             "Megadepth currently does not support creating bigWig files on ",

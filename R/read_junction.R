@@ -33,7 +33,6 @@
 #'
 #' all_jxs
 read_junction_table <- function(tsv_file) {
-
     # define the expected column names and types
     if (grepl("all_jxs.tsv", tsv_file)) {
         col_names <- c(

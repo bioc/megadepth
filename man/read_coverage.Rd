@@ -29,10 +29,10 @@ the user using Megadepth.
 }
 \section{Functions}{
 \itemize{
-\item \code{read_coverage_table}: Read a coverage TSV file created by Megadepth as
+\item \code{read_coverage_table()}: Read a coverage TSV file created by Megadepth as
 a table
-}}
 
+}}
 \examples{
 
 ## Install if necessary

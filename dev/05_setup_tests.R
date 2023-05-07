@@ -3,12 +3,13 @@ dir.create(here::here("inst", "tests"), showWarnings = FALSE)
 
 
 ## Clean any tests files
-unlink(dir(
-    here::here("inst", "tests"),
-    full.names = TRUE,
-    include.dirs = TRUE
-),
-recursive = TRUE
+unlink(
+    dir(
+        here::here("inst", "tests"),
+        full.names = TRUE,
+        include.dirs = TRUE
+    ),
+    recursive = TRUE
 )
 
 test_files <- c(

@@ -1,7 +1,6 @@
 ## test conversion of BAM to BigWig
 if (!xfun::is_windows()) {
     test_that("test conversion of BAM to bw", {
-
         ## Create the bigwig file
         new_files <- bam_to_bigwig(
             pkg_file("tests", "test.bam"),

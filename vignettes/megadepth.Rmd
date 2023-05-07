@@ -70,8 +70,8 @@ The goal of `r Biocpkg("megadepth")` is to provide an R interface to the command
 
 Here is an illustration on how fast `r Biocpkg("megadepth")` is compared to other tools for processing local and remote BigWig files.
 
-```{r "runtime", out.width="100%", echo = FALSE, fig.cap = "Timing results. Timing comparison for processing 1,000 genomic regions on a bigWig file that is available on the local disk or on a remote resource. We compared megadepth against rtracklayer and pyBigWig. megadepth is typically faster that these other software solutions for computing the mean coverage across a set of 1,000 input genomic regions. Check <https://github.com/LieberInstitute/megadepth/tree/master/analysis> for more details."}
-knitr::include_graphics("https://raw.githubusercontent.com/LieberInstitute/megadepth/master/analysis/md_rt_pybw_runtime.png")
+```{r "runtime", out.width="100%", echo = FALSE, fig.cap = "Timing results. Timing comparison for processing 1,000 genomic regions on a bigWig file that is available on the local disk or on a remote resource. We compared megadepth against rtracklayer and pyBigWig. megadepth is typically faster that these other software solutions for computing the mean coverage across a set of 1,000 input genomic regions. Check <https://github.com/LieberInstitute/megadepth/tree/devel/analysis> for more details."}
+knitr::include_graphics("https://raw.githubusercontent.com/LieberInstitute/megadepth/devel/analysis/md_rt_pybw_runtime.png")
 ```
 
 
@@ -169,7 +169,7 @@ This example is just the tip of the iceberg, as [Megadepth](https://github.com/C
 
 To make it easier to use, `megadepth` includes functions that simplify the number of arguments, read in the output files, and converts them into R/Bioconductor friendly objects, such as `get_coverage()` illustrated previously in the quick start section.
 
-We hope that you'll find `megadepth` and [Megadepth](https://github.com/ChristopherWilks/megadepth) useful for your work. If you are interested in checking how **fast** `megadepth` is, check out the [**speed analysis**](https://github.com/LieberInstitute/megadepth/tree/master/analysis) comparison against other tools. Note that the size of the files used and the number of genomic regions queried will affect the speed comparisons.
+We hope that you'll find `megadepth` and [Megadepth](https://github.com/ChristopherWilks/megadepth) useful for your work. If you are interested in checking how **fast** `megadepth` is, check out the [**speed analysis**](https://github.com/LieberInstitute/megadepth/tree/devel/analysis) comparison against other tools. Note that the size of the files used and the number of genomic regions queried will affect the speed comparisons.
 
 ```{r "interface_options"}
 ## R-like interface

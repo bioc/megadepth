@@ -72,10 +72,11 @@
 #'     )
 #' }
 get_coverage <-
-    function(bigwig_file,
-    op = c("sum", "mean", "max", "min"),
-    annotation,
-    prefix = file.path(tempdir(), "bw.mean")) {
+    function(
+        bigwig_file,
+        op = c("sum", "mean", "max", "min"),
+        annotation,
+        prefix = file.path(tempdir(), "bw.mean")) {
         megadepth_shell2(
             bigwig_file,
             list(

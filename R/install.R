@@ -140,8 +140,9 @@ install_megadepth_bin <- function(exec) {
 }
 
 # obtain possible locations of the megadepth executable
-bin_paths <- function(dir = "Megadepth",
-    extra_path = getOption("megadepth.dir")) {
+bin_paths <- function(
+        dir = "Megadepth",
+        extra_path = getOption("megadepth.dir")) {
     if (xfun::is_windows()) {
         path <- Sys.getenv("APPDATA", "")
         path <- if (fs::dir_exists(path)) {

@@ -6,21 +6,29 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![BioC
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![Bioc release
 status](http://www.bioconductor.org/shields/build/release/bioc/megadepth.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/megadepth)
-[![BioC dev
+[![Bioc devel
 status](http://www.bioconductor.org/shields/build/devel/bioc/megadepth.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/megadepth)
+[![Bioc downloads
+rank](https://bioconductor.org/shields/downloads/release/megadepth.svg)](http://bioconductor.org/packages/stats/bioc/megadepth/)
+[![Bioc
+support](https://bioconductor.org/shields/posts/megadepth.svg)](https://support.bioconductor.org/tag/megadepth)
+[![Bioc
+history](https://bioconductor.org/shields/years-in-bioc/megadepth.svg)](https://bioconductor.org/packages/release/bioc/html/megadepth.html#since)
+[![Bioc last
+commit](https://bioconductor.org/shields/lastcommit/devel/bioc/megadepth.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/megadepth/)
+[![Bioc
+dependencies](https://bioconductor.org/shields/dependencies/release/megadepth.svg)](https://bioconductor.org/packages/release/bioc/html/megadepth.html#since)
 [![Codecov test
-coverage](https://codecov.io/gh/LieberInstitute/megadepth/branch/master/graph/badge.svg)](https://codecov.io/gh/LieberInstitute/megadepth?branch=master)
+coverage](https://codecov.io/gh/LieberInstitute/megadepth/branch/devel/graph/badge.svg)](https://codecov.io/gh/LieberInstitute/megadepth?branch=devel)
 [![R build
 status](https://github.com/LieberInstitute/megadepth/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/LieberInstitute/megadepth/actions)
-[![Support site activity, last 6 months: tagged questions/avg. answers
-per question/avg. comments per question/accepted answers, or 0 if no
-tagged
-posts.](http://www.bioconductor.org/shields/posts/megadepth.svg)](https://support.bioconductor.org/t/megadepth/)
 [![GitHub
 issues](https://img.shields.io/github/issues/LieberInstitute/megadepth)](https://github.com/LieberInstitute/megadepth/issues)
+[![GitHub
+pulls](https://img.shields.io/github/issues-pr/LieberInstitute/megadepth)](https://github.com/LieberInstitute/megadepth/pulls)
 <!-- badges: end -->
 
 The goal of `megadepth` is to provide an R interface to the command line
@@ -37,7 +45,7 @@ information from them.
 Here is an illustration on how fast `megadepth` is compared to other
 tools for processing local and remote BigWig files.
 
-<a href="https://github.com/LieberInstitute/megadepth/tree/master/analysis"><img src="https://raw.githubusercontent.com/LieberInstitute/megadepth/master/analysis/md_rt_pybw_runtime.png" width="800px" ></a>
+<a href="https://github.com/LieberInstitute/megadepth/tree/devel/analysis"><img src="https://raw.githubusercontent.com/LieberInstitute/megadepth/devel/analysis/md_rt_pybw_runtime.png" width="800px" ></a>
 
 Throughout the documentation we use a capital `M` to refer to the
 software by Christopher Wilks and a lower case `m` to refer to this
@@ -77,9 +85,7 @@ library("megadepth")
 
 ## Install Megadepth's pre-compiled binary on your system
 install_megadepth()
-#> The latest megadepth version is 1.1.0c
-#> This is not an interactive session, therefore megadepth has been installed temporarily to 
-#> /var/folders/kb/g5h79h8d5zv_0wpyg6pb2sph0000gn/T//RtmpuyvsB8/megadepth
+#> It seems megadepth has been installed. Use force = TRUE to reinstall or upgrade.
 
 ## Next, we locate the example BigWig and annotation files
 example_bw <- system.file("tests", "test.bam.all.bw",
@@ -125,7 +131,7 @@ We hope that you’ll find `megadepth` and
 [Megadepth](https://github.com/ChristopherWilks/megadepth) useful for
 your work. If you are interested in checking how **fast** `megadepth`
 is, check out the [**speed
-analysis**](https://github.com/LieberInstitute/megadepth/tree/master/analysis)
+analysis**](https://github.com/LieberInstitute/megadepth/tree/devel/analysis)
 comparison against other tools. Note that the size of the files used and
 the number of genomic regions queried will affect the speed comparisons.
 
@@ -133,7 +139,7 @@ the number of genomic regions queried will affect the speed comparisons.
 ## R-like interface
 ## that captures the standard output into R
 head(megadepth_shell(help = TRUE))
-#> [1] "megadepth 1.1.0c"                 ""                                
+#> [1] "megadepth 1.2.0"                  ""                                
 #> [3] "BAM and BigWig utility."          ""                                
 #> [5] "Usage:"                           "  megadepth <bam|bw|-> [options]"
 
@@ -141,7 +147,7 @@ head(megadepth_shell(help = TRUE))
 megadepth_cmd("--help")
 ```
 
-    #> megadepth 1.1.0c
+    #> megadepth 1.2.0
     #>  
     #>  BAM and BigWig utility.
     #>  
@@ -170,8 +176,10 @@ megadepth_cmd("--help")
     #>    --annotation <bed>                      Only output the regions in this BED applying the argument to --op to them.
     #>    --op <sum[default], mean, min, max>     Statistic to run on the intervals provided by --annotation
     #>    --sums-only                             Discard coordinates from output of summarized regions
+    #>    --distance (2200[default])              Number of base pairs between end of last annotation and start of new to consider in the same BigWig query window (a form of binning) for performance.  This determines the number of times the BigWig index is queried.
+    #>    --unsorted (off[default])               There's a performance improvement *if* BED file passed to --annotation is 1) sorted by sort -k1,1 -k2,2n (default is to assume sorted and check for unsorted positions, if unsorted positions are found, will fall back to slower version)
     #>    --bwbuffer <1GB[default]>               Size of buffer for reading BigWig files, critical to use a large value (~1GB) for remote BigWigs.
-    #>                                             Default setting should be fine for most uses, but raise if very slow on a remote BigWig.
+    #>                                            Default setting should be fine for most uses, but raise if very slow on a remote BigWig.
     #>  
     #>  
     #>  BAM Input:
@@ -248,29 +256,30 @@ Please run this yourself to check for any updates on how to cite
 
 ``` r
 print(citation("megadepth"), bibtex = TRUE)
+#> To cite package 'megadepth' in publications use:
 #> 
-#> Zhang D, Collado-Torres L (2021). _megadepth: BigWig and BAM related
-#> utilities_. doi: 10.18129/B9.bioc.megadepth (URL:
-#> https://doi.org/10.18129/B9.bioc.megadepth),
-#> https://github.com/LieberInstitute/megadepth - R package version 1.3.3,
-#> <URL: http://www.bioconductor.org/packages/megadepth>.
+#>   Zhang D, Collado-Torres L (2023). _megadepth: BigWig and BAM related
+#>   utilities_. doi:10.18129/B9.bioc.megadepth
+#>   <https://doi.org/10.18129/B9.bioc.megadepth>,
+#>   https://github.com/LieberInstitute/megadepth - R package version
+#>   1.11.0, <http://www.bioconductor.org/packages/megadepth>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {megadepth: BigWig and BAM related utilities},
 #>     author = {David Zhang and Leonardo Collado-Torres},
-#>     year = {2021},
+#>     year = {2023},
 #>     url = {http://www.bioconductor.org/packages/megadepth},
-#>     note = {https://github.com/LieberInstitute/megadepth - R package version 1.3.3},
+#>     note = {https://github.com/LieberInstitute/megadepth - R package version 1.11.0},
 #>     doi = {10.18129/B9.bioc.megadepth},
 #>   }
 #> 
-#> Wilks C, Ahmed O, Baker DN, Zhang D, Collado-Torres L, Langmead B
-#> (2020). "Megadepth: efficient coverage quantification for BigWigs and
-#> BAMs." _bioRxiv_. doi: 10.1101/2020.12.17.423317 (URL:
-#> https://doi.org/10.1101/2020.12.17.423317), <URL:
-#> https://www.biorxiv.org/content/10.1101/2020.12.17.423317v1>.
+#>   Wilks C, Ahmed O, Baker DN, Zhang D, Collado-Torres L, Langmead B
+#>   (2020). "Megadepth: efficient coverage quantification for BigWigs and
+#>   BAMs." _bioRxiv_. doi:10.1101/2020.12.17.423317
+#>   <https://doi.org/10.1101/2020.12.17.423317>,
+#>   <https://www.biorxiv.org/content/10.1101/2020.12.17.423317v1>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -297,32 +306,32 @@ By contributing to this project, you agree to abide by its terms.
 
 ## Development tools
 
-  - Continuous code testing is possible thanks to [GitHub
-    actions](https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/)
-    through *[usethis](https://CRAN.R-project.org/package=usethis)*,
-    *[remotes](https://CRAN.R-project.org/package=remotes)*,
-    *[sysreqs](https://github.com/r-hub/sysreqs)* and
-    *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)*
-    customized to use [Bioconductor’s docker
-    containers](https://www.bioconductor.org/help/docker/) and
-    *[BiocCheck](https://bioconductor.org/packages/3.12/BiocCheck)*.
-  - Code coverage assessment is possible thanks to
-    [codecov](https://codecov.io/gh) and
-    *[covr](https://CRAN.R-project.org/package=covr)*.
-  - The [documentation
-    website](http://LieberInstitute.github.io/megadepth) is
-    automatically updated thanks to
-    *[pkgdown](https://CRAN.R-project.org/package=pkgdown)*.
-  - The code is styled automatically thanks to
-    *[styler](https://CRAN.R-project.org/package=styler)*.
-  - The documentation is formatted thanks to
-    *[devtools](https://CRAN.R-project.org/package=devtools)* and
-    *[roxygen2](https://CRAN.R-project.org/package=roxygen2)*.
+- Continuous code testing is possible thanks to [GitHub
+  actions](https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/)
+  through *[usethis](https://CRAN.R-project.org/package=usethis)*,
+  *[remotes](https://CRAN.R-project.org/package=remotes)*,
+  *[sysreqs](https://github.com/r-hub/sysreqs)* and
+  *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)* customized
+  to use [Bioconductor’s docker
+  containers](https://www.bioconductor.org/help/docker/) and
+  *[BiocCheck](https://bioconductor.org/packages/3.17/BiocCheck)*.
+- Code coverage assessment is possible thanks to
+  [codecov](https://codecov.io/gh) and
+  *[covr](https://CRAN.R-project.org/package=covr)*.
+- The [documentation
+  website](http://LieberInstitute.github.io/megadepth) is automatically
+  updated thanks to
+  *[pkgdown](https://CRAN.R-project.org/package=pkgdown)*.
+- The code is styled automatically thanks to
+  *[styler](https://CRAN.R-project.org/package=styler)*.
+- The documentation is formatted thanks to
+  *[devtools](https://CRAN.R-project.org/package=devtools)* and
+  *[roxygen2](https://CRAN.R-project.org/package=roxygen2)*.
 
 For more details, check the `dev` directory.
 
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.12/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.17/biocthis)*.
 
 ## `ReCount` project
 
@@ -334,25 +343,26 @@ R/Bioconductor package and other tools are related to each other.
 
 ## Teams involved
 
-*[megadepth](https://bioconductor.org/packages/3.12/megadepth)* was made
+*[megadepth](https://bioconductor.org/packages/3.17/megadepth)* was made
 possible to [David Zhang](https://twitter.com/dyzhang32), the author of
-*[dasper](https://bioconductor.org/packages/3.12/dasper)*, and a member
+*[dasper](https://bioconductor.org/packages/3.17/dasper)*, and a member
 of the [Mina Ryten](https://snca.atica.um.es/)’s lab at UCL.
 
 The `ReCount` family involves the following teams:
 
-  - [Ben Langmead’s lab](http://www.langmead-lab.org/) at JHU Computer
-    Science
-  - [Kasper Daniel Hansen’s lab](https://www.hansenlab.org/) at JHBSPH
-    Biostatistics Department
-  - [Leonardo Collado-Torres](http://lcolladotor.github.io/) and [Andrew
-    E. Jaffe](http://aejaffe.com/) from [LIBD](https://www.libd.org/)
-  - [Abhinav Nellore’s lab](http://nellore.bio/) at OHSU
-  - [Jeff Leek’s lab](http://jtleek.com/) at JHBSPH Biostatistics
-    Deparment
-  - Data hosted by [SciServer from IDIES at
-    JHU](https://www.sciserver.org/)
+- [Ben Langmead’s lab](http://www.langmead-lab.org/) at JHU Computer
+  Science
+- [Kasper Daniel Hansen’s lab](https://www.hansenlab.org/) at JHBSPH
+  Biostatistics Department
+- [Leonardo Collado-Torres](http://lcolladotor.github.io/) and
+  [Andrew E. Jaffe](http://aejaffe.com/) from
+  [LIBD](https://www.libd.org/)
+- [Abhinav Nellore’s lab](http://nellore.bio/) at OHSU
+- [Jeff Leek’s lab](http://jtleek.com/) at JHBSPH Biostatistics
+  Deparment
+- Data hosted by [SciServer from IDIES at
+  JHU](https://www.sciserver.org/)
 
 |                                                                                                                                                                               |                                                                                                              |                                                                                                                                                                         |                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href="http://www.langmead-lab.org/"><img src="http://www.langmead-lab.org/wp-content/uploads/2014/01/Screen-Shot-2014-02-02-at-5.20.13-PM-1024x199.png" width="250px"></a> | <a href="https://www.libd.org/"><img src="http://lcolladotor.github.io/img/LIBD_logo.jpg" width="250px"></a> | <a href="http://nellore.bio/"><img src="https://seekvectorlogo.net/wp-content/uploads/2018/08/oregon-health-science-university-ohsu-vector-logo.png" width="250px"></a> | <a href="https://www.sciserver.org/"><img src="https://skyserver.sdss.org/dr14/en/images/sciserver_logo_inverted_vertical.png" width="250px"></a> |
