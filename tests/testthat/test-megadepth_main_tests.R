@@ -64,7 +64,7 @@ test_that("test with uniques", {
 ## test bigwig2mean on remote BW
 test_that("test bigwig2mean on remote bw", {
     megadepth_shell(
-        "http://stingray.cs.jhu.edu/data/temp/megadepth.test.bam.all.bw",
+        "https://snaptron.cs.jhu.edu/data/temp/megadepth.test.bam.all.bw",
         "op" = "mean",
         "annotation" = pkg_file("tests", "testbw2.bed"),
         "prefix" = file.path(tempdir(), "bw2.remote.mean"),
